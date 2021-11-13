@@ -3,27 +3,24 @@ import Script from 'next/script'
 import { useEffect } from 'react'
 
 async function runPyodide() {
-  setTimeout(async () => {
-    console.log("loadPyodide start:")
-    // const pyodide_pkg = await import("pyodide/pyodide.js");
-    const pyodide = await loadPyodide({
-      indexURL: "https://cdn.jsdelivr.net/pyodide/v0.18.1/full/",
-    });
-    console.log("after loadPyodide:", { pyodide })
-    console.log("pyodide.runPython:")
+  console.log("loadPyodide start:")
+  const pyodide_pkg = await import("pyodide/pyodide.js");
+  const pyodide = await pyodide_pkg.loadPyodide({
+    indexURL: "https://cdn.jsdelivr.net/pyodide/v0.18.1/full/",
+  });
+  console.log("after loadPyodide:", { pyodide })
+  console.log("pyodide.runPython:")
 
-    pyodide && pyodide.runPython(`
+  pyodide && pyodide.runPython(`
       import js
       div = js.document.createElement("div")
       div.innerHTML = "<h1>Hello Pyodide2! This element was created from Python</h1>"
       js.document.body.prepend(div)
     `);
-  }, 3000);
-
 }
 
 export async function getStaticProps() {
-  // await runPyodide();
+  await runPyodide();
   return {
     props: {}, // will be passed to the page component as props
   }
@@ -35,6 +32,11 @@ export async function getStaticProps() {
  *     1. Script onLoad (works)
  *     2. getStaticProps (not works, loadPyodide undefined)
  *     3. useEffect (works)
+ * 2. NPM + await import("pyodide/pyodide.js"); (not works)
+ *     1. getStaticProps (NPM): Errors: 
+ *        node.js ENOENT: no such file or directory, open 'https://cdn.jsdelivr.net/pyodide/v0.18.1/full/packages.json' 
+ *        browser: ReferenceError: require is not defined
+ *     2. useEffect: node.js: Module not found: Can't resolve 'fs/promises' (even "webpackIgnore: true" is added)
  */
 
 export default function Home() {
@@ -43,10 +45,10 @@ export default function Home() {
   }, [])
   return (
     <div className="container">
-      <Script src="https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js"
+      {/* <Script src="https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js"
         onLoad={async () => {
           runPyodide();
-        }} />
+        }} /> */}
       <Head>
         <title>Create Next App</title>
         <link rel="icon" href="/favicon.ico" />
