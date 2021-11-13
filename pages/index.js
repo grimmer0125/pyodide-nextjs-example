@@ -1,8 +1,52 @@
 import Head from 'next/head'
+import Script from 'next/script'
+import { useEffect } from 'react'
+
+async function runPyodide() {
+  setTimeout(async () => { // need by useEffect
+    console.log("loadPyodide start:")
+    // const pyodide_pkg = await import("pyodide/pyodide.js");
+    const pyodide = await loadPyodide({
+      indexURL: "https://cdn.jsdelivr.net/pyodide/v0.18.1/full/",
+    });
+    console.log("after loadPyodide:", { pyodide })
+    console.log("pyodide.runPython:")
+
+    pyodide && pyodide.runPython(`
+      import js
+      div = js.document.createElement("div")
+      div.innerHTML = "<h1>Hello Pyodide2! This element was created from Python</h1>"
+      js.document.body.prepend(div)
+    `);
+  }, 3000);
+
+}
+
+export async function getStaticProps() {
+  // await runPyodide();
+  return {
+    props: {}, // will be passed to the page component as props
+  }
+}
+
+/**
+ * tried
+ * 1. CDN + <Script src="https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js" (works) 
+ *     1. Script onLoad (works)
+ *     2. getStaticProps (not works, loadPyodide undefined)
+ *     3. useEffect + use setTimeout in runPyodide first to wait for loading ok (works)
+ */
 
 export default function Home() {
+  useEffect(() => {
+    // runPyodide();
+  }, [])
   return (
     <div className="container">
+      <Script src="https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js"
+        onLoad={async () => {
+          runPyodide();
+        }} />
       <Head>
         <title>Create Next App</title>
         <link rel="icon" href="/favicon.ico" />
