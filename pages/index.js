@@ -3,22 +3,22 @@ import Script from 'next/script'
 import { useEffect } from 'react'
 
 async function runPyodide() {
-  setTimeout(async () => { // need by useEffect
-    console.log("loadPyodide start:")
-    // const pyodide_pkg = await import("pyodide/pyodide.js");
-    const pyodide = await loadPyodide({
-      indexURL: "https://cdn.jsdelivr.net/pyodide/v0.18.1/full/",
-    });
-    console.log("after loadPyodide:", { pyodide })
-    console.log("pyodide.runPython:")
+//   setTimeout(async () => { // need by useEffect
+  console.log("loadPyodide start:")
+  // const pyodide_pkg = await import("pyodide/pyodide.js");
+  const pyodide = await loadPyodide({
+    indexURL: "https://cdn.jsdelivr.net/pyodide/v0.18.1/full/",
+  });
+  console.log("after loadPyodide:", { pyodide })
+  console.log("pyodide.runPython:")
 
-    pyodide && pyodide.runPython(`
-      import js
-      div = js.document.createElement("div")
-      div.innerHTML = "<h1>Hello Pyodide2! This element was created from Python</h1>"
-      js.document.body.prepend(div)
-    `);
-  }, 3000);
+  pyodide && pyodide.runPython(`
+    import js
+    div = js.document.createElement("div")
+    div.innerHTML = "<h1>Hello Pyodide2! This element was created from Python</h1>"
+    js.document.body.prepend(div)
+  `);
+//   }, 3000);
 
 }
 
