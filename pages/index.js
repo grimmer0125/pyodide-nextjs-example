@@ -20,7 +20,7 @@ async function runPyodide() {
 }
 
 export async function getStaticProps() {
-  await runPyodide();
+  // await runPyodide();
   return {
     props: {}, // will be passed to the page component as props
   }
@@ -32,16 +32,17 @@ export async function getStaticProps() {
  *     1. Script onLoad (works)
  *     2. getStaticProps (not works, loadPyodide undefined)
  *     3. useEffect (works)
- * 2. NPM + await import("pyodide/pyodide.js"); (not works)
- *     1. getStaticProps (NPM): Errors: 
+ * 2. NPM + await import("pyodide/pyodide.js"); (not work)
+ *     1. getStaticProps (NPM) running in the server side: Errors: 
  *        node.js ENOENT: no such file or directory, open 'https://cdn.jsdelivr.net/pyodide/v0.18.1/full/packages.json' 
  *        browser: ReferenceError: require is not defined
- *     2. useEffect: node.js: Module not found: Can't resolve 'fs/promises' (even "webpackIgnore: true" is added)
+ *     2. useEffect (client side): Uncaught (in promise) TypeError: _module_js__WEBPACK_IMPORTED_MODULE_0__.Module.runPythonInternal is not a function
+*         at _loadPackage (load-pyodide.js?3843:264)
  */
 
 export default function Home() {
   useEffect(() => {
-    // runPyodide();
+    runPyodide();
   }, [])
   return (
     <div className="container">
